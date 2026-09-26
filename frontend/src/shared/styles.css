@@ -1316,17 +1316,61 @@ label.button {
   .listing-photos { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
-.vanta-layer {
+.sky-layer {
   position: absolute;
   inset: 0;
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  background: linear-gradient(180deg, #8ec5ea 0%, #c9dced 55%, #e8eef4 100%);
 }
 
-.vanta-layer--fixed {
-  position: fixed;
-  z-index: -1;
+.sky-wash {
+  position: absolute;
+  inset: -10%;
+  background:
+    radial-gradient(ellipse 70% 45% at 20% 30%, rgba(255, 255, 255, 0.55), transparent 62%),
+    radial-gradient(ellipse 50% 35% at 80% 20%, rgba(255, 255, 255, 0.4), transparent 60%);
+}
+
+.sky-cloud {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(48px);
+  background: rgba(255, 255, 255, 0.55);
+  animation: sky-drift 48s linear infinite;
+}
+
+.sky-cloud--a {
+  width: 55vw;
+  height: 28vw;
+  top: 8%;
+  left: -10%;
+  animation-duration: 56s;
+}
+
+.sky-cloud--b {
+  width: 42vw;
+  height: 22vw;
+  top: 28%;
+  left: 40%;
+  background: rgba(236, 244, 250, 0.7);
+  animation-duration: 72s;
+  animation-direction: reverse;
+}
+
+.sky-cloud--c {
+  width: 60vw;
+  height: 24vw;
+  top: 52%;
+  left: 10%;
+  background: rgba(255, 255, 255, 0.42);
+  animation-duration: 64s;
+}
+
+@keyframes sky-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(12vw, 0, 0); }
 }
 
 .lm-root {
@@ -1956,10 +2000,7 @@ label.button {
     height: 210px;
   }
 
-  .lm-hero .vanta-layer canvas {
-    transform: scale(2.2);
-    transform-origin: center bottom;
-  }
+  .sky-cloud { filter: blur(36px); animation-duration: 80s; }
 
   .lm-back { display: none; }
 
@@ -1994,4 +2035,5 @@ label.button {
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
+  .sky-cloud { animation: none; }
 }
