@@ -38,6 +38,23 @@ npm run dev
 
 Open `http://127.0.0.1:5173`.
 
+## Deploy the frontend on Vercel
+
+Connect [solid-fiesta](https://github.com/harshilnayee2004/solid-fiesta). This repo already points Vercel at `frontend`.
+
+1. Import the GitHub repo in Vercel.
+2. Framework: Vite. Output: `frontend/dist`.
+3. Add a Production environment variable:
+
+   `VITE_API_BASE_URL` = the public URL of the Hapstr API (no trailing slash), for example `https://api.your-host.example`.
+
+   Vite inlines this at **build** time. After you change it, redeploy.
+4. On the API host, set `CORS_ORIGIN` to your Vercel URL, comma-separated if you also keep local:
+
+   `https://your-app.vercel.app,http://127.0.0.1:5173`
+
+The marketing page will load without an API. Collect, workspace, and realtor calls will fail until `VITE_API_BASE_URL` is a reachable HTTPS origin. `http://127.0.0.1:4000` only works on your machine.
+
 ## How the skeleton is put together
 
 `backend/src/services/dataAccess.js` is the only module that queries the database. Routes, controllers, and the UI call that layer when a feature needs data. They do not open SQLite themselves.

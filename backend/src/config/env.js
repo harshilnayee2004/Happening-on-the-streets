@@ -26,6 +26,9 @@ export const env = Object.freeze({
   port: Number(process.env.PORT || 4000),
   databasePath: databasePath(),
   authSecret: requiredSecret('AUTH_SECRET'),
-  corsOrigin: process.env.CORS_ORIGIN || 'http://127.0.0.1:5173',
+  corsOrigin: (process.env.CORS_ORIGIN || 'http://127.0.0.1:5173')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean),
   isProduction: process.env.NODE_ENV === 'production',
 });
