@@ -16,6 +16,10 @@ import {
   listVisits,
   postMessage,
   readRoom,
+  updateWorkspaceConsent,
+  workspaceReadiness,
+  workspaceReadinessOverride,
+  readDemo,
   readVisitPhoto,
   shareListing,
   startVisit,
@@ -34,6 +38,7 @@ const imageBody = express.raw({
 
 router.post('/listings', requireActor, asyncHandler(importListing));
 router.get('/listings', requireActor, asyncHandler(listListings));
+router.get('/demo', requireActor, asyncHandler(readDemo));
 router.post('/visits', requireActor, asyncHandler(startVisit));
 router.get('/visits', requireActor, asyncHandler(listVisits));
 router.post('/visits/:id/notes', requireActor, asyncHandler(addVisitNote));
@@ -47,6 +52,9 @@ router.get('/workspaces/:id', requireActor, asyncHandler(readRoom));
 router.get('/workspaces/:id/messages', requireActor, asyncHandler(listMessages));
 router.post('/workspaces/:id/messages', requireActor, asyncHandler(postMessage));
 router.post('/workspaces/:id/photo-labels', requireActor, asyncHandler(labelPhoto));
+router.post('/workspaces/:id/consent', requireActor, asyncHandler(updateWorkspaceConsent));
+router.get('/workspaces/:id/readiness', requireActor, asyncHandler(workspaceReadiness));
+router.post('/workspaces/:id/readiness/override', requireActor, asyncHandler(workspaceReadinessOverride));
 router.use(asyncHandler(buyerPlaceholder));
 
 export default router;

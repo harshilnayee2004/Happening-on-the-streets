@@ -6,6 +6,7 @@ import { ensureGuest } from '../../shared/api/guestSession.js';
 import { useGuestWorkspace } from '../../shared/guestWorkspace.jsx';
 import { openHouseLinks } from '../../shared/nav.js';
 import HomePhoto from '../components/HomePhoto.jsx';
+import DemoTag from '../components/DemoTag.jsx';
 import { formatPrice, homeFacts, showAddress } from '../format.js';
 
 function visitErrorMessage(code, fallback) {
@@ -106,7 +107,10 @@ function VisitCard({ property, visit, onSaved }) {
     <article className="home-card">
       <HomePhoto src={property.photoUrls?.[0]} alt={title} />
       <div className="home-body">
-        <p className="home-price">{formatPrice(property.priceCents)}</p>
+        <p className="home-price">
+          {formatPrice(property.priceCents)}
+          {property.isDemo ? <DemoTag /> : null}
+        </p>
         <h3>{title}</h3>
         {showAddress(property) ? <p className="home-address">{property.address}</p> : null}
         {facts.length > 0 ? (

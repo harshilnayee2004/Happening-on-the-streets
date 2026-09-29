@@ -31,6 +31,23 @@ export function showAddress(property) {
   return addressKey(property.address) !== addressKey(property.title);
 }
 
+export function streetNick(property) {
+  const source = String(property?.address || property?.title || '').trim();
+  if (!source) return 'This home';
+  const street = source.split(',')[0].trim();
+  const named = street.replace(/^\d+[A-Za-z]?\s+/, '').trim();
+  return named || street;
+}
+
+export function cityLine(property) {
+  const parts = String(property?.address || '')
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean);
+  if (parts.length > 1) return parts.slice(1).join(', ');
+  return '';
+}
+
 export function homeFacts(property) {
   const facts = [];
   if (property.beds != null) facts.push(`${plain.format(property.beds)} bd`);

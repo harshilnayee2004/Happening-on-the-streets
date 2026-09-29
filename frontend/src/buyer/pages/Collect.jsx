@@ -7,7 +7,10 @@ import OpenChat from '../components/OpenChat.jsx';
 import ShareHome from '../components/ShareHome.jsx';
 import ListingImportForm from '../components/ListingImportForm.jsx';
 import TrueMonthlyCost from '../components/TrueMonthlyCost.jsx';
+import DemoTag from '../components/DemoTag.jsx';
+import ViewDemo from '../components/ViewDemo.jsx';
 import { formatPrice, homeFacts, showAddress } from '../format.js';
+import { googleCalendarUrl } from '../scheduleVisit.js';
 
 function HomeCard({ property }) {
   const facts = homeFacts(property);
@@ -16,7 +19,10 @@ function HomeCard({ property }) {
     <article className="home-card">
       <HomePhoto src={property.photoUrls?.[0]} alt={title} />
       <div className="home-body">
-        <p className="home-price">{formatPrice(property.priceCents)}</p>
+        <p className="home-price">
+          {formatPrice(property.priceCents)}
+          {property.isDemo ? <DemoTag /> : null}
+        </p>
         <h3>{title}</h3>
         {showAddress(property) ? <p className="home-address">{property.address}</p> : null}
         {facts.length > 0 ? (
@@ -30,6 +36,18 @@ function HomeCard({ property }) {
         <p className="home-actions home-actions--row">
           <OpenChat propertyId={property.id} />
           <ShareHome propertyId={property.id} />
+          <a
+            className="button button--quiet"
+            href={googleCalendarUrl({
+              title: `Visit ${property.title || property.address}`,
+              address: property.address || '',
+              start: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+            })}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Schedule a visit
+          </a>
           <Link to="/open-house">Start an open-house album</Link>
         </p>
       </div>
@@ -53,9 +71,12 @@ export default function Collect() {
       <section className="saved" aria-label="Saved homes">
         <div className="section-head">
           <h2>Your homes</h2>
-          {ready && properties.length > 0 ? (
-            <p className="count">{properties.length} saved</p>
-          ) : null}
+          <div className="section-head-actions">
+            <ViewDemo />
+            {ready && properties.length > 0 ? (
+              <p className="count">{properties.length} saved</p>
+            ) : null}
+          </div>
         </div>
         {loadError ? <p className="form-error" role="alert">{loadError}</p> : null}
         {!ready && !loadError && properties.length === 0 ? <p className="muted">Loading your homes…</p> : null}

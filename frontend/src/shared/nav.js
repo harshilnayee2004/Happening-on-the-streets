@@ -18,6 +18,7 @@ export const realtorLinks = [
 
 export const referralLinks = [
   { to: '/referral/submit', label: 'Submit lead' },
+  { to: '/referral/matches', label: 'Find matches' },
 ];
 
 const openHousePaths = new Set(openHouseLinks.map((link) => link.to).concat('/tools'));

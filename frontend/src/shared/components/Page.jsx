@@ -6,7 +6,7 @@ export default function Page({
   lede,
   eyebrow,
   links = [],
-  shellNote = 'Navigation shell.',
+  shellNote = '',
   children,
 }) {
   usePageTitle(title);

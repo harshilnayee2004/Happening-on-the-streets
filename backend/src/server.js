@@ -1,3 +1,4 @@
+import http from 'node:http';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -10,6 +11,7 @@ import buyerRoutes from './routes/buyer.routes.js';
 import realtorRoutes from './routes/realtor.routes.js';
 import referralRoutes from './routes/referral.routes.js';
 import { migrate } from './services/dataAccess.js';
+import { attachChatSocket } from './chatSocket.js';
 
 export function createApp() {
   const app = express();
@@ -37,10 +39,42 @@ export function createApp() {
   return app;
 }
 
-if (process.env.NODE_ENV !== 'test') {
-  const app = createApp();
-  migrate();
-  app.listen(env.port, '127.0.0.1', () => {
-    console.log(`Hapstr API listening on http://127.0.0.1:${env.port}`);
+function listenWithRetry(server) {
+  let attempt = 0;
+  const onError = (err) => {
+    if (err.code === 'EADDRINUSE' && attempt < 20) {
+      attempt += 1;
+      console.warn(`Port ${env.port} is busy, retry ${attempt}/20`);
+      setTimeout(() => server.listen(env.port, env.host), 200);
+      return;
+    }
+    console.error(`Could not start Hapstr API: ${err.message}`);
+    process.exitCode = 1;
+  };
+  server.on('error', onError);
+  server.on('listening', () => {
+    console.log(`SQLite ready at ${env.databasePath}`);
+    console.log(`Hapstr API listening on http://${env.host}:${env.port}`);
   });
+  server.listen(env.port, env.host);
+}
+
+if (process.env.NODE_ENV !== 'test') {
+  process.on('unhandledRejection', (err) => {
+    console.error('Unhandled rejection (request not crashed):', err);
+  });
+  process.on('uncaughtException', (err) => {
+    console.error('Uncaught exception:', err);
+  });
+  const app = createApp();
+  try {
+    migrate();
+  } catch (err) {
+    console.error('Database did not open or migrate. Check DATABASE_PATH and disk permissions.');
+    console.error(err);
+    process.exit(1);
+  }
+  const server = http.createServer(app);
+  attachChatSocket(server);
+  listenWithRetry(server);
 }

@@ -24,6 +24,7 @@ function databasePath() {
 export const env = Object.freeze({
   nodeEnv: process.env.NODE_ENV || 'development',
   port: Number(process.env.PORT || 4000),
+  host: process.env.HOST || '0.0.0.0',
   databasePath: databasePath(),
   authSecret: requiredSecret('AUTH_SECRET'),
   corsOrigin: (process.env.CORS_ORIGIN || 'http://127.0.0.1:5173')

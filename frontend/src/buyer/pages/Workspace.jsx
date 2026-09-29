@@ -8,6 +8,7 @@ import { openHouseLinks } from '../../shared/nav.js';
 import HomePhoto from '../components/HomePhoto.jsx';
 import OpenChat from '../components/OpenChat.jsx';
 import ShareHome from '../components/ShareHome.jsx';
+import DemoTag from '../components/DemoTag.jsx';
 import { formatPrice, homeFacts } from '../format.js';
 
 export default function Workspace() {
@@ -67,7 +68,10 @@ export default function Workspace() {
             <article className="home-card" key={room.workspace.id}>
               <HomePhoto src={room.property.photoUrls?.[0]} alt={title} />
               <div className="home-body">
-                <p className="home-price">{formatPrice(room.property.priceCents)}</p>
+                <p className="home-price">
+                  {formatPrice(room.property.priceCents)}
+                  {room.property.isDemo ? <DemoTag /> : null}
+                </p>
                 <h3>{title}</h3>
                 {facts.length > 0 ? (
                   <ul className="home-facts">
@@ -105,7 +109,10 @@ export default function Workspace() {
               <article className="home-card" key={property.id}>
                 <HomePhoto src={property.photoUrls?.[0]} alt={title} />
                 <div className="home-body">
-                  <p className="home-price">{formatPrice(property.priceCents)}</p>
+                  <p className="home-price">
+                    {formatPrice(property.priceCents)}
+                    {property.isDemo ? <DemoTag /> : null}
+                  </p>
                   <h3>{title}</h3>
                   <p className="home-actions home-actions--row">
                     <OpenChat propertyId={property.id} />

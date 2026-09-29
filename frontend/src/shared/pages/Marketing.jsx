@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { usePageTitle } from '../usePageTitle.js';
 import { openHouseLinks, realtorLinks, referralLinks } from '../nav.js';
 import VantaClouds from '../visual/VantaClouds.jsx';
+import ViewDemo from '../../buyer/components/ViewDemo.jsx';
 
 const PRODUCTS = [
   {
@@ -44,6 +45,7 @@ export default function Marketing() {
           </p>
           <div className="mk-hero-actions">
             <Link to="/tools" className="lm-btn-dark">Start as a buyer</Link>
+            <ViewDemo className="lm-btn-outline" />
             <Link to="/realtor" className="lm-btn-outline">I am a realtor</Link>
           </div>
         </div>

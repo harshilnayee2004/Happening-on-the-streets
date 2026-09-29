@@ -6,13 +6,14 @@
     "node": ">=22.14.0"
   },
   "scripts": {
-    "dev": "node --disable-warning=ExperimentalWarning --watch --env-file=.env src/server.js",
-    "start": "node --disable-warning=ExperimentalWarning --env-file=.env src/server.js",
-    "test": "node --disable-warning=ExperimentalWarning --test src/auth.test.js src/listingParser.test.js src/boundaries.test.js src/rls.test.js src/collect.test.js src/openHouse.test.js src/workspace.test.js src/realtor.test.js"
+    "dev": "node --disable-warning=ExperimentalWarning --env-file=.env src/server.js",
+    "start": "node --disable-warning=ExperimentalWarning src/server.js",
+    "test": "node --disable-warning=ExperimentalWarning --test src/auth.test.js src/listingParser.test.js src/boundaries.test.js src/rls.test.js src/collect.test.js src/openHouse.test.js src/workspace.test.js src/realtor.test.js src/analytics.test.js src/realtorDashboard.test.js src/phase3.test.js src/demoHome.test.js"
   },
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^4.22.3",
-    "helmet": "^8.3.0"
+    "helmet": "^8.3.0",
+    "ws": "^8.18.3"
   }
 }

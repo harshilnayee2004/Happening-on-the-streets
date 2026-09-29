@@ -85,7 +85,8 @@ test('a guest import is stored for that guest only', async () => {
     const listB = await fetch(`${base}/api/buyer/listings`, {
       headers: { 'x-guest-token': guestB.token },
     }).then((res) => res.json());
-    assert.deepEqual(listB.properties, []);
+    assert.equal(listB.properties.length, 1);
+    assert.equal(listB.properties[0].isDemo, true);
 
     const second = await fetch(`${base}/api/buyer/listings`, {
       method: 'POST',
@@ -97,15 +98,20 @@ test('a guest import is stored for that guest only', async () => {
     const listA = await fetch(`${base}/api/buyer/listings`, {
       headers: { 'x-guest-token': guestA.token },
     }).then((res) => res.json());
-    assert.equal(listA.properties.length, 2);
-    assert.equal(listA.properties[0].address, '9 Oak Avenue, Berkeley, CA, 94702');
-    assert.equal(listA.properties[1].address, '123 Main Street, Oakland, CA, 94611');
-    assert.equal(listA.properties.every((property) => property.createdBy === guestA.actor.id), true);
+    assert.equal(listA.properties.length, 3);
+    assert.equal(listA.properties[0].isDemo, true);
+    assert.equal(listA.properties[1].address, '9 Oak Avenue, Berkeley, CA, 94702');
+    assert.equal(listA.properties[2].address, '123 Main Street, Oakland, CA, 94611');
+    assert.equal(
+      listA.properties.filter((property) => !property.isDemo).every((property) => property.createdBy === guestA.actor.id),
+      true,
+    );
 
     const listBAfter = await fetch(`${base}/api/buyer/listings`, {
       headers: { 'x-guest-token': guestB.token },
     }).then((res) => res.json());
-    assert.deepEqual(listBAfter.properties, []);
+    assert.equal(listBAfter.properties.length, 1);
+    assert.equal(listBAfter.properties[0].isDemo, true);
   } finally {
     setListingFetchForTests(null);
     await new Promise((resolve, reject) => server.close((err) => (err ? reject(err) : resolve())));

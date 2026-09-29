@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useGuestWorkspace } from '../../shared/guestWorkspace.jsx';
 import { usePageTitle } from '../../shared/usePageTitle.js';
 import ListingImportForm from '../components/ListingImportForm.jsx';
+import ViewDemo from '../components/ViewDemo.jsx';
 import CardSwap, { Card } from '../../shared/visual/CardSwap.jsx';
 import VantaClouds from '../../shared/visual/VantaClouds.jsx';
 
@@ -73,6 +74,7 @@ export default function Home() {
               onSaved={() => navigate('/collect')}
             />
             <div className="landing-hero-links">
+              <ViewDemo className="lm-btn-outline" />
               <Link to="/learn-more" className="lm-btn-outline">How it works</Link>
               {ready && savedCount > 0 ? (
                 <Link to="/collect">You have {savedCount} saved · open them</Link>

@@ -1,5 +1,19 @@
 export const LOAN_TERM_YEARS = 30;
 
+export const DEFAULT_MONTHLY_ASSUMPTIONS = Object.freeze({
+  downPaymentPercent: 20,
+  annualInterestPercent: 6.5,
+  loanTermYears: LOAN_TERM_YEARS,
+  propertyTaxPercent: 1.2,
+  insurancePerYear: 1800,
+  hoaPerMonth: 0,
+  gasPerMonth: 50,
+  electricityPerMonth: 120,
+  waterPerMonth: 40,
+  maintenancePercentPerYear: 1,
+});
+
+
 function roundCents(value) {
   return Math.round((value + Number.EPSILON) * 100) / 100;
 }
@@ -73,4 +87,12 @@ export function estimateMonthlyCost(input) {
     total: roundCents(lines.reduce((sum, line) => sum + line.monthly, 0)),
     totalEstimate: 'Estimate',
   };
+}
+
+export function estimateForPriceCents(priceCents) {
+  if (typeof priceCents !== 'number' || !Number.isFinite(priceCents)) return null;
+  return estimateMonthlyCost({
+    ...DEFAULT_MONTHLY_ASSUMPTIONS,
+    purchasePrice: priceCents / 100,
+  });
 }

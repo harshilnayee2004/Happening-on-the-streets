@@ -4,9 +4,10 @@ import Page from '../../shared/components/Page.jsx';
 import { api } from '../../shared/api/client.js';
 import { ensureGuest } from '../../shared/api/guestSession.js';
 import { realtorLinks } from '../../shared/nav.js';
-import { listingErrorMessage } from '../../buyer/listingErrors.js';
+import { listingErrorFromAxios } from '../../buyer/listingErrors.js';
 import HomePhoto from '../../buyer/components/HomePhoto.jsx';
 import { formatPrice } from '../../buyer/format.js';
+import QrCode from '../../shared/QrCode.jsx';
 
 export default function CreateWorkspace() {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ export default function CreateWorkspace() {
         link: `${window.location.origin}/w/${data.token}`,
       });
     } catch (err) {
-      setError(listingErrorMessage(err.response?.data?.error));
+      setError(listingErrorFromAxios(err));
     } finally {
       setBusy(false);
     }
@@ -83,7 +84,11 @@ export default function CreateWorkspace() {
           <div className="home-body">
             <p className="home-price">{formatPrice(created.property.priceCents)}</p>
             <h3>{created.property.title || created.property.address}</h3>
-            <p className="muted">Buyer invite. Anyone with this link can open the home and chat.</p>
+            <p className="muted">Buyer invite. Anyone with this link can open the home and chat. Same token as /w/:token.</p>
+            <div className="qr-block">
+              <QrCode value={created.link} label="Door QR for this workspace" />
+              <p className="muted">Scan at the door to open the workspace.</p>
+            </div>
             <div className="import-row">
               <input readOnly value={created.link} onFocus={(event) => event.target.select()} />
               <button type="button" className="button" onClick={copy}>

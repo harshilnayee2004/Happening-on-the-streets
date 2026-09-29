@@ -36,6 +36,8 @@ export const Workspace = Object.freeze({
       workspace_id TEXT NOT NULL,
       user_id TEXT NOT NULL,
       member_role TEXT NOT NULL CHECK (member_role IN ('realtor', 'buyer', 'family', 'contractor')),
+      consent_given INTEGER NOT NULL DEFAULT 0,
+      consent_given_at TEXT,
       created_at TEXT NOT NULL,
       PRIMARY KEY (workspace_id, user_id),
       FOREIGN KEY (workspace_id) REFERENCES workspaces(id),

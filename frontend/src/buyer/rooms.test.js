@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { mentionDraft, parseMentions, photoForRoom } from './rooms.js';
+import { lastRoomMention, mentionDraft, parseMentions, photoForRoom } from './rooms.js';
 
 test('chat text turns @room into a mention', () => {
   const parts = parseMentions('Look at @room then the @kitchen.');
@@ -13,6 +13,11 @@ test('unknown at-words stay plain text', () => {
   const parts = parseMentions('email me @not-a-room');
   assert.equal(parts.length, 1);
   assert.equal(parts[0].type, 'text');
+});
+
+test('the last @room in a typed message is the hero target', () => {
+  assert.equal(lastRoomMention('the light in @kitchen is better'), 'kitchen');
+  assert.equal(lastRoomMention('@living then @bedroom'), 'bedroom');
 });
 
 test('a tagged kitchen photo is preferred over the first listing shot', () => {

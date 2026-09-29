@@ -26,7 +26,7 @@ export default function OpenChat({ propertyId }) {
       await ensureGuest();
       const { data } = await api.post(`/api/buyer/listings/${propertyId}/share`);
       await refreshRooms();
-      navigate(`/workspace/${data.workspace.id}`);
+      navigate(data.property?.isDemo && data.token ? `/w/${data.token}` : `/workspace/${data.workspace.id}`);
     } catch {
       setError('Chat could not be opened.');
     } finally {

@@ -7,10 +7,14 @@ import {
   listOpenHouseVisits,
   listProperties,
   listSharedWorkspaces,
+  readDemoInvite,
   listWorkspaceChat,
+  overrideReadiness,
   postWorkspaceChat,
   readOpenHousePhoto,
+  readReadiness,
   readSharedWorkspace,
+  setOwnMemberConsent,
   setPhotoLabel,
   shareCollectedHome,
   startOpenHouseVisit,
@@ -28,6 +32,11 @@ export async function importListing(req, res) {
 export function listListings(req, res) {
   const properties = runWithActor(req.actor, () => listProperties());
   res.json({ properties });
+}
+
+export function readDemo(req, res) {
+  const invite = runWithActor(req.actor, () => readDemoInvite());
+  res.json(invite);
 }
 
 export function startVisit(req, res) {
@@ -119,11 +128,32 @@ export function labelPhoto(req, res) {
   res.json({ photoLabels });
 }
 
+export function updateWorkspaceConsent(req, res) {
+  const given = req.body?.given;
+  if (typeof given !== 'boolean') throw new HttpError(400, 'invalid_input');
+  const consent = runWithActor(req.actor, () => setOwnMemberConsent(req.params.id, given));
+  res.json({ consent });
+}
+
 export function updateProfile(req, res) {
   const displayName = req.body?.displayName;
   if (typeof displayName !== 'string') throw new HttpError(400, 'invalid_input');
   const profile = runWithActor(req.actor, () => updateOwnDisplayName(displayName));
   res.json({ profile });
+}
+
+export function workspaceReadiness(req, res) {
+  const readiness = runWithActor(req.actor, () => readReadiness(req.params.id));
+  res.json({ readiness });
+}
+
+export function workspaceReadinessOverride(req, res) {
+  const score = req.body?.score;
+  const reason = req.body?.reason;
+  if (!Number.isInteger(score)) throw new HttpError(400, 'invalid_input');
+  if (typeof reason !== 'string') throw new HttpError(400, 'invalid_input');
+  const readiness = runWithActor(req.actor, () => overrideReadiness(req.params.id, score, reason));
+  res.json({ readiness });
 }
 
 export function buyerPlaceholder() {

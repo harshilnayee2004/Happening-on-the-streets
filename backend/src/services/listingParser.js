@@ -10,7 +10,7 @@ export const LISTING_FETCH_POLICY = Object.freeze({
     'www.realtor.com',
   ]),
   followRedirects: false,
-  timeoutMs: 8000,
+  timeoutMs: 20000,
   maxBytes: 1_500_000,
 });
 
@@ -29,6 +29,8 @@ export function assertAllowedListingUrl(raw) {
   const url = assertHttpsUrl(raw);
   if (isBlockedAddress(url.hostname)) throw new HttpError(400, 'blocked_address');
   if (!ALLOWED_HOSTS.has(url.hostname.toLowerCase())) throw new HttpError(400, 'host_not_allowed');
+  url.search = '';
+  url.hash = '';
   return url;
 }
 
@@ -281,6 +283,8 @@ export async function parseListing(rawUrl, options = {}) {
   if (response.redirected || response.type === 'opaqueredirect' || (response.status >= 300 && response.status < 400)) {
     throw new HttpError(422, 'redirect_not_allowed');
   }
+  if (response.status === 429) throw new HttpError(429, 'listing_rate_limited');
+  if (response.status === 403) throw new HttpError(422, 'listing_unavailable');
   if (response.status !== 200) throw new HttpError(422, 'listing_unavailable');
   const contentType = response.headers.get('content-type') || '';
   if (contentType && !/text\/html|application\/xhtml\+xml|text\/plain|application\/json/i.test(contentType)) {

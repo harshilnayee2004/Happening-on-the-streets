@@ -16,6 +16,17 @@ test('allow-list accepts Zillow and Realtor.com https URLs', () => {
   assert.equal(realtor.hostname, 'www.realtor.com');
 });
 
+test('share tracking query is stripped before fetch', () => {
+  const zillow = assertAllowedListingUrl(
+    'https://www.zillow.com/homedetails/2617-Scorpio-Dr-Colorado-Springs-CO-80906/13669472_zpid/?utm_campaign=zillowwebmessage&utm_medium=referral&utm_source=txtshare',
+  );
+  assert.equal(zillow.search, '');
+  assert.equal(
+    zillow.href,
+    'https://www.zillow.com/homedetails/2617-Scorpio-Dr-Colorado-Springs-CO-80906/13669472_zpid/',
+  );
+});
+
 test('parser rejects hosts, schemes, credentials, ports, and private addresses before any fetch', () => {
   assert.throws(() => assertAllowedListingUrl('https://evil.example/list'), (err) => err.code === 'host_not_allowed');
   assert.throws(() => assertAllowedListingUrl('https://www.zillow.com.evil.example/list'), (err) => err.code === 'host_not_allowed');

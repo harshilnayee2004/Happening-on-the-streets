@@ -17,6 +17,7 @@ import RealtorHome from './realtor/pages/RealtorHome.jsx';
 import CreateWorkspace from './realtor/pages/CreateWorkspace.jsx';
 import Dashboard from './realtor/pages/Dashboard.jsx';
 import SubmitLead from './referral/pages/SubmitLead.jsx';
+import FindMatches from './referral/pages/FindMatches.jsx';
 
 export function RootLayout() {
   return (
@@ -50,6 +51,7 @@ export const routes = [
         path: 'referral',
         element: (
           <Page
+            eyebrow="Referral"
             title="Referral"
             lede="Pass on a lead you cannot personally serve."
             links={referralLinks}
@@ -57,6 +59,7 @@ export const routes = [
         ),
       },
       { path: 'referral/submit', element: <SubmitLead /> },
+      { path: 'referral/matches', element: <FindMatches /> },
       {
         path: '*',
         element: <Page title="Page not found" lede="This address is not part of Hapstr." />,

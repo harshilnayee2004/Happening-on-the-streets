@@ -36,7 +36,7 @@ function readAmount(value, { emptyIsZero = true } = {}) {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-export default function TrueMonthlyCost({ purchasePrice }) {
+export default function TrueMonthlyCost({ purchasePrice, compact = false }) {
   const baseId = useId();
   const closeRef = useRef(null);
   const [open, setOpen] = useState(false);
@@ -81,44 +81,123 @@ export default function TrueMonthlyCost({ purchasePrice }) {
     setValues((current) => ({ ...current, [name]: next }));
   }
 
-  const fields = (
-    <>
-      <div className="cost-groups">
-        {GROUPS.map((group) => (
-          <fieldset key={group.title} className="cost-group">
-            <legend>{group.title}</legend>
-            {group.fields.map(([name, label, unit]) => {
-              const id = `${baseId}-${name}`;
-              return (
-                <div className="cost-field" key={name}>
-                  <label htmlFor={id}>{label}</label>
-                  <div className="cost-input">
-                    <input
-                      id={id}
-                      inputMode="decimal"
-                      value={values[name]}
-                      onChange={(event) => update(name, event.target.value)}
-                    />
-                    <span aria-hidden="true">{unit}</span>
-                  </div>
+  const inputGroups = (
+    <div className="cost-groups">
+      {GROUPS.map((group) => (
+        <fieldset key={group.title} className="cost-group">
+          <legend>{group.title}</legend>
+          {group.fields.map(([name, label, unit]) => {
+            const id = `${baseId}-${name}`;
+            return (
+              <div className="cost-field" key={name}>
+                <label htmlFor={id}>{label}</label>
+                <div className="cost-input">
+                  <input
+                    id={id}
+                    inputMode="decimal"
+                    value={values[name]}
+                    onChange={(event) => update(name, event.target.value)}
+                  />
+                  <span aria-hidden="true">{unit}</span>
                 </div>
-              );
-            })}
-          </fieldset>
-        ))}
-      </div>
-      {estimate ? (
-        <ul className="cost-lines">
-          {estimate.lines.map((line) => (
-            <li key={line.id}>
-              <span>{line.label}</span>
-              <span>{formatDollars(line.monthly)} · {line.estimate}</span>
-            </li>
-          ))}
-        </ul>
-      ) : null}
-    </>
+              </div>
+            );
+          })}
+        </fieldset>
+      ))}
+    </div>
   );
+
+  const breakdown = estimate ? (
+    <aside className="cost-dialog-breakdown" aria-label="Monthly breakdown">
+      <p className="cost-breakdown-k">Breakdown</p>
+      <ul className="cost-lines cost-lines--panel">
+        {estimate.lines.map((line) => (
+          <li key={line.id}>
+            <span className="cost-line-label">{line.label}</span>
+            <span className="cost-line-amt">{formatDollars(line.monthly)}</span>
+            <span className="cost-line-note">{line.estimate}</span>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  ) : null;
+
+  function costDialog() {
+    return (
+      <div className="dialog-backdrop" onClick={() => setOpen(false)}>
+        <div
+          className="dialog dialog--cost"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={`${baseId}-title`}
+          onClick={(event) => event.stopPropagation()}
+        >
+          <div className="cost-dialog-head">
+            <div className="cost-dialog-title">
+              <h2 id={`${baseId}-title`}>TRUE Monthly Cost</h2>
+              <p className="muted">Edit any field — the total updates live.</p>
+            </div>
+            <div className="cost-dialog-head-end">
+              {estimate ? (
+                <p className="cost-headline cost-headline--dialog">
+                  <strong>{formatWholeDollars(estimate.total)}</strong>
+                  <span>/mo · estimate</span>
+                </p>
+              ) : null}
+              <button
+                type="button"
+                className="cost-dialog-x"
+                aria-label="Close"
+                onClick={() => setOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+          </div>
+          <div className="cost-dialog-body">
+            <div className="cost-dialog-layout">
+              <div className="cost-dialog-fields">{inputGroups}</div>
+              {breakdown}
+            </div>
+          </div>
+          <div className="dialog-actions dialog-actions--cost">
+            <button
+              ref={closeRef}
+              type="button"
+              className="button button--quiet"
+              onClick={() => setOpen(false)}
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (compact) {
+    return (
+      <section className="monthly-cost monthly-cost--compact" aria-label="TRUE Monthly Cost">
+        <button type="button" className="workspace-cost-card" onClick={() => setOpen(true)}>
+          <span className="workspace-cost-top">
+            <span className="workspace-cost-k">Est. monthly</span>
+            <span className="workspace-cost-pill">Tap to customize</span>
+          </span>
+          <span className="workspace-cost-value">
+            {estimate ? formatWholeDollars(estimate.total) : '—'}
+            <span className="workspace-cost-suffix">/mo</span>
+          </span>
+          <span className="workspace-cost-note">{`${LOAN_TERM_YEARS}-year fixed · estimate`}</span>
+          <span className="workspace-cost-cta">
+            See payment breakdown
+            <span className="workspace-cost-chevron" aria-hidden="true">›</span>
+          </span>
+        </button>
+        {open ? costDialog() : null}
+      </section>
+    );
+  }
 
   return (
     <section className="monthly-cost" aria-label="TRUE Monthly Cost">
@@ -142,36 +221,7 @@ export default function TrueMonthlyCost({ purchasePrice }) {
         Adjust the numbers
       </button>
 
-      {open ? (
-        <div className="dialog-backdrop" onClick={() => setOpen(false)}>
-          <div
-            className="dialog dialog--cost"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={`${baseId}-title`}
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="cost-dialog-head">
-              <div>
-                <h2 id={`${baseId}-title`}>TRUE Monthly Cost</h2>
-                <p className="muted">Change a number. The estimate updates here.</p>
-              </div>
-              {estimate ? (
-                <p className="cost-headline">
-                  <strong>{formatWholeDollars(estimate.total)}</strong>
-                  <span>per month · Estimate</span>
-                </p>
-              ) : null}
-            </div>
-            <div className="cost-dialog-body">{fields}</div>
-            <div className="dialog-actions">
-              <button ref={closeRef} type="button" className="button" onClick={() => setOpen(false)}>
-                Done
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      {open ? costDialog() : null}
     </section>
   );
 }

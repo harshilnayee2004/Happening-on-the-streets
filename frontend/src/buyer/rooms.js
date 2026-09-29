@@ -42,6 +42,11 @@ export function parseMentions(text) {
   return parts.length > 0 ? parts : [{ type: 'text', value: source }];
 }
 
+export function lastRoomMention(text) {
+  const mentions = parseMentions(text).filter((part) => part.type === 'mention');
+  return mentions.at(-1)?.value || '';
+}
+
 export function mentionDraft(text) {
   const match = /(?:^|\s)@([a-z][a-z0-9-]{0,31})?$/i.exec(String(text || ''));
   if (!match) return '';

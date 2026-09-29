@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "test": "node --test src/buyer/trueMonthlyCost.test.js src/buyer/rooms.test.js",
+    "test": "node --test src/buyer/trueMonthlyCost.test.js src/buyer/rooms.test.js src/buyer/scheduleVisit.test.js src/buyer/compareTable.test.js src/realtor/dashGlance.test.js",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1 --port 4173"
   },
@@ -15,6 +15,7 @@
     "axios": "^1.20.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
+    "qrcode": "^1.5.4",
     "react-router-dom": "^7.18.4"
   },
   "devDependencies": {

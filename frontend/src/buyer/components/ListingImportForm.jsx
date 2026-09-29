@@ -2,7 +2,7 @@ import { useId, useState } from 'react';
 import { api } from '../../shared/api/client.js';
 import { ensureGuest } from '../../shared/api/guestSession.js';
 import { useGuestWorkspace } from '../../shared/guestWorkspace.jsx';
-import { listingErrorMessage } from '../listingErrors.js';
+import { listingErrorFromAxios } from '../listingErrors.js';
 
 export default function ListingImportForm({
   onSaved,
@@ -28,7 +28,7 @@ export default function ListingImportForm({
       await refresh();
       if (onSaved) onSaved(data.property);
     } catch (err) {
-      setError(listingErrorMessage(err.response?.data?.error));
+      setError(listingErrorFromAxios(err));
     } finally {
       setImporting(false);
     }

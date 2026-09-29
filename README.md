@@ -27,7 +27,7 @@ npm test
 npm run dev
 ```
 
-The API listens on `http://127.0.0.1:4000`. `GET /api/health` returns `{ "ok": true }`.
+The API binds `0.0.0.0` and `PORT` (default 4000). Locally that is `http://127.0.0.1:4000`. `GET /api/health` returns `{ "ok": true }`.
 
 ```powershell
 cd frontend
@@ -54,6 +54,31 @@ Connect [solid-fiesta](https://github.com/harshilnayee2004/solid-fiesta). This r
    `https://your-app.vercel.app,http://127.0.0.1:5173`
 
 The marketing page will load without an API. Collect, workspace, and realtor calls will fail until `VITE_API_BASE_URL` is a reachable HTTPS origin. `http://127.0.0.1:4000` only works on your machine.
+
+## Deploy the API on Railway (SQLite + volume)
+
+The API is a long-running Node 22 process with a file SQLite database. Do not put it on Vercel. Railway is the simplest persistent-volume setup.
+
+1. Create a Railway project and a service from this GitHub repo.
+2. Set the service **root directory** to `backend` (uses `backend/Dockerfile`).
+3. Add a **volume**. Mount it at `/data`.
+4. Set these variables on the service (not in git):
+
+   | Name | Value |
+   |---|---|
+   | `NODE_ENV` | `production` |
+   | `HOST` | `0.0.0.0` |
+   | `PORT` | Railway injects this; do not hardcode it |
+   | `AUTH_SECRET` | random string, at least 32 characters |
+   | `DATABASE_PATH` | `/data/hapstr.sqlite` |
+   | `CORS_ORIGIN` | `https://YOUR-VERCEL-APP.vercel.app,http://127.0.0.1:5173` |
+
+5. Deploy. Confirm `GET https://YOUR-RAILWAY-HOST/api/health` returns `{ "ok": true }`.
+6. Put that origin (no trailing slash) in Vercel as `VITE_API_BASE_URL` and **redeploy** the frontend.
+
+The public API URL is not checked in. After you create the Railway service, write the URL into `PROJECT_HISTORY.md` under the stack section.
+
+Render (Web Service + disk at `/data`) or Fly.io (volume + `fly.toml`) work the same way: listen on `0.0.0.0:$PORT`, keep SQLite on the mounted disk.
 
 ## How the skeleton is put together
 

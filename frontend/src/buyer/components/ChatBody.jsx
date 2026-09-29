@@ -10,6 +10,7 @@ export default function ChatBody({ text, onMention }) {
             key={index}
             type="button"
             className="mention"
+            aria-label={`Show the ${roomLabel(part.value).toLowerCase()} photo`}
             onClick={() => onMention(part.value)}
           >
             @{roomLabel(part.value).toLowerCase()}

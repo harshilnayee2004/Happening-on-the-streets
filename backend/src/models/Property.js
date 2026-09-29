@@ -17,6 +17,7 @@ export const Property = Object.freeze({
       created_by TEXT NOT NULL,
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL,
+      is_demo INTEGER NOT NULL DEFAULT 0,
       FOREIGN KEY (created_by) REFERENCES users(id)
     );
     CREATE INDEX IF NOT EXISTS idx_properties_created_by ON properties(created_by);
