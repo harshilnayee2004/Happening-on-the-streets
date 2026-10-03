@@ -82,14 +82,31 @@ export default function SharedWorkspace() {
 
   useEffect(() => {
     let cancelled = false;
+    async function loadWorkspacePayload() {
+      if (invite) {
+        return (await api.post('/api/buyer/workspaces/join', { token: key })).data;
+      }
+      const maxAttempts = 3;
+      for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+        try {
+          return (await api.get(`/api/buyer/workspaces/${key}`)).data;
+        } catch (err) {
+          const status = err?.response?.status;
+          const retryable = !err?.response || status >= 500 || err?.code === 'ECONNABORTED';
+          if (!retryable || attempt === maxAttempts) throw err;
+          await new Promise((resolve) => {
+            setTimeout(resolve, 1500 * attempt);
+          });
+        }
+      }
+      return null;
+    }
     async function open() {
       setError('');
       if (!room) setReady(false);
       await ensureGuest();
-      const data = invite
-        ? (await api.post('/api/buyer/workspaces/join', { token: key })).data
-        : (await api.get(`/api/buyer/workspaces/${key}`)).data;
-      if (cancelled) return;
+      const data = await loadWorkspacePayload();
+      if (cancelled || !data) return;
       setRoom(data);
       setLabels(data.photoLabels || []);
       const you = data.members.find((member) => member.isYou);
