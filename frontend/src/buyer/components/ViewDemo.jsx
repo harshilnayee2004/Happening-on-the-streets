@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../../shared/api/client.js';
 import { ensureGuest } from '../../shared/api/guestSession.js';
 
 export default function ViewDemo({ className = 'button button--quiet' }) {
@@ -13,8 +12,7 @@ export default function ViewDemo({ className = 'button button--quiet' }) {
     setBusy(true);
     try {
       await ensureGuest();
-      const { data } = await api.get('/api/buyer/demo');
-      navigate(`/w/${data.token}`);
+      navigate('/workspace/ws_hapstr_demo_home');
     } catch {
       setError('The demo home could not be opened.');
     } finally {

@@ -17,7 +17,14 @@ import { formatPrice, homeFacts, showAddress } from '../format.js';
 import DemoTag from '../components/DemoTag.jsx';
 import { lastRoomMention, mentionDraft, photoForRoom, ROOM_OPTIONS, roomLabel } from '../rooms.js';
 
-function roomError(code) {
+function roomError(err) {
+  const code = err?.response?.data?.error;
+  if (!err?.response) {
+    if (err?.code === 'ECONNABORTED') {
+      return 'The server is waking up (this can take up to a minute on free hosting). Wait, then tap Back and try again.';
+    }
+    return 'Could not reach the server. Check Wi‑Fi or mobile data, then try again.';
+  }
   if (code === 'not_found') return 'This invite is not valid, or the room is not open to you.';
   if (code === 'unauthenticated') return 'Start again as a guest, then open the link.';
   return 'This workspace could not be opened.';
@@ -97,7 +104,7 @@ export default function SharedWorkspace() {
     }
     open()
       .catch((err) => {
-        if (!cancelled) setError(roomError(err.response?.data?.error));
+        if (!cancelled) setError(roomError(err));
       })
       .finally(() => {
         if (!cancelled) setReady(true);
