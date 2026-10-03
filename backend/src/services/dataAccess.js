@@ -1885,6 +1885,7 @@ export function joinWorkspaceByToken(rawToken) {
       db().prepare(`
         INSERT INTO workspace_members (workspace_id, user_id, member_role, created_at)
         VALUES (?, ?, ?, ?)
+        ON CONFLICT(workspace_id, user_id) DO NOTHING
       `).run(grant.workspace_id, current.id, MEMBER_ROLE.FAMILY, nowIso());
     } catch (err) {
       rethrow(err);
@@ -1899,10 +1900,15 @@ export function joinWorkspaceByToken(rawToken) {
 function ensureDemoWorkspaceMember(userId) {
   seedDemoHome();
   if (membershipRole(DEMO_WORKSPACE_ID, userId)) return;
-  db().prepare(`
-    INSERT INTO workspace_members (workspace_id, user_id, member_role, created_at)
-    VALUES (?, ?, ?, ?)
-  `).run(DEMO_WORKSPACE_ID, userId, MEMBER_ROLE.FAMILY, nowIso());
+  try {
+    db().prepare(`
+      INSERT INTO workspace_members (workspace_id, user_id, member_role, created_at)
+      VALUES (?, ?, ?, ?)
+      ON CONFLICT(workspace_id, user_id) DO NOTHING
+    `).run(DEMO_WORKSPACE_ID, userId, MEMBER_ROLE.FAMILY, nowIso());
+  } catch (err) {
+    rethrow(err);
+  }
 }
 
 export function readSharedWorkspace(workspaceId) {

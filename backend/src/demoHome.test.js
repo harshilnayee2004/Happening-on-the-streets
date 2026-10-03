@@ -65,3 +65,25 @@ test('any guest can open the demo invite and see tagged room photos', async () =
     await new Promise((resolve, reject) => server.close((err) => (err ? reject(err) : resolve())));
   }
 });
+
+test('concurrent opens of the demo workspace do not 500', async () => {
+  const app = createApp();
+  const server = await new Promise((resolve) => {
+    const listening = app.listen(0, '127.0.0.1', () => resolve(listening));
+  });
+  const base = `http://127.0.0.1:${server.address().port}`;
+  try {
+    const guest = await fetch(`${base}/api/auth/guest`, { method: 'POST' }).then((res) => res.json());
+    const headers = { 'x-guest-token': guest.token };
+    const results = await Promise.all(
+      Array.from({ length: 12 }, () =>
+        fetch(`${base}/api/buyer/workspaces/ws_hapstr_demo_home`, { headers }),
+      ),
+    );
+    for (const res of results) {
+      assert.equal(res.status, 200, `expected 200, got ${res.status}`);
+    }
+  } finally {
+    await new Promise((resolve, reject) => server.close((err) => (err ? reject(err) : resolve())));
+  }
+});
