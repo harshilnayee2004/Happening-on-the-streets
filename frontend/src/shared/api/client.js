@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { resolveApiBaseUrl } from './apiBaseUrl.js';
 import { clearGuestToken, readGuestToken, writeGuestToken } from './guestToken.js';
 
-const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:4000';
+const baseURL = resolveApiBaseUrl();
 
 export const api = axios.create({
   baseURL,
