@@ -480,10 +480,11 @@ export default function SharedWorkspace() {
               <li className="chat-empty">
                 <p>Mention a room — the photo updates live.</p>
                 <div className="chat-empty-rooms">
-                  {[['kitchen', 'Kitchen'], ['living', 'Living'], ['bedroom', 'Bedroom'], ['bathroom', 'Bathroom']].map(([slug, label]) => (
+                  {[['kitchen', 'Kitchen'], ['living', 'Living room'], ['bedroom', 'Bedroom'], ['bathroom', 'Bathroom']].map(([slug, label]) => (
                     <button
                       key={slug}
                       type="button"
+                      className="chat-room-chip"
                       onClick={() => {
                         insertMention(slug);
                         setFocusSlug(slug);

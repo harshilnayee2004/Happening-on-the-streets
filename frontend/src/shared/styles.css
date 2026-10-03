@@ -736,6 +736,20 @@ button:disabled,
   color: var(--ink);
 }
 
+button.mention {
+  display: inline;
+  padding: 1px 7px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font: inherit;
+  font-weight: 700;
+  line-height: 1.6;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
 .mention-list button span {
   color: var(--ink-soft);
   font-size: 0.8rem;
@@ -2172,16 +2186,29 @@ button.workspace-cost-card:hover .workspace-cost-chevron {
   justify-content: center;
   gap: 6px;
   margin-top: 10px;
+  max-width: 100%;
 }
 
-.chat-empty-rooms button {
-  padding: 6px 10px;
+button.chat-room-chip {
+  flex-shrink: 0;
+  padding: 7px 12px;
   border: 1px solid var(--line-strong);
   border-radius: 999px;
   background: var(--surface);
+  color: var(--ink);
   font: inherit;
   font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
   cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+
+button.chat-room-chip:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+  border-color: var(--ink);
 }
 
 .chat-error {
@@ -3010,19 +3037,70 @@ button.cost-dialog-x:hover {
   .chat-panel {
     order: -1;
     position: static;
-    min-height: 52vh;
-    max-height: 70vh;
+    min-height: min(42vh, 22rem);
+    max-height: min(58vh, 28rem);
     border-radius: 18px;
   }
 
   .chat-top { padding: 12px; }
   .chat-name input { width: 6.5rem; }
 
+  .chat-log {
+    padding: 12px;
+  }
+
+  .chat-empty-rooms {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 2px 0 4px;
+    margin-top: 8px;
+  }
+
+  .chat-empty-rooms::-webkit-scrollbar {
+    display: none;
+  }
+
   .chat-compose {
     padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
   }
 
   .chat-compose .button { width: auto; min-width: 4.5rem; }
+
+  .mention-list {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 8px 12px 0;
+  }
+
+  .mention-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .room-rail-scroll {
+    mask-image: none;
+  }
+
+  .room-rail--overlay .room-rail-list {
+    padding: 0 12px 2px;
+    scroll-padding-inline: 12px;
+  }
+
+  .workspace-hero-foot {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .room-seg {
+    font-size: 0.62rem;
+    padding: 4px 8px;
+  }
 
   .chat-toasts {
     left: 12px;
